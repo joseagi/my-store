@@ -1,5 +1,14 @@
 import { PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient()
+import { PrismaPg} from '@prisma/adapter-pg'
+
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL!,
+})
+
+const prisma = new PrismaClient({
+  adapter,
+  log: ['error'],
+})
 
 const products = [
   {
@@ -84,10 +93,16 @@ async function main() {
       update: {},
       create: product,
     })
+    console.log('\n Seeded ${product.name}')
   }
-  console.log(`Seeded ${products.length} products`)
+  console.log(`Seeded ${products.length} products successfully`)
 }
 
 main()
-  .catch(console.error)
-  .finally(() => prisma.$disconnect())
+  .catch((e) => {
+    console.error('\n Seed failed:', e.message)
+    process.exit(1)
+  })
+  .finally(async () => {
+    await prisma.$disconnect()
+  })
