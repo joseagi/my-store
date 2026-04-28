@@ -22,8 +22,10 @@ import path from 'path'
 const root = process.cwd()
 
 // Load .env first, then .env.local overrides
-config({ path: path.join(root, '.env') })
-config({ path: path.join(root, '.env.local'), override: true })
+if (process.env.NODE_ENV !== 'production') {
+  config({ path: path.join(root, '.env') })
+  config({ path: path.join(root, '.env.local'), override: true })
+}
 
 // Debug — confirm it loaded (remove this line after confirming)
 console.log('DATABASE_URL loaded:', !!process.env.DATABASE_URL)

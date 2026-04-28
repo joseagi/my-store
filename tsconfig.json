@@ -37,6 +37,8 @@
   ],
   "exclude": [
     "node_modules",
-    "prisma"
+    "prisma",
+    "prisma.config.ts",
+    "scripts"
   ]
 }
