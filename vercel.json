@@ -4,8 +4,5 @@
   "framework": "nextjs",
   "env": {
     "PRISMA_GENERATE_DATAPROXY": "true"
-  },
-  "engines": {
-    "node": "20.x"
   }
 }
