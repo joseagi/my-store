@@ -1,9 +1,14 @@
-import type { NextConfig } from "next";
+// next.config.ts
+import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  turbopack:{
-  /* config options here */
+  images: {
+    remotePatterns: [
+      { hostname: 'images.unsplash.com' },
+      { hostname: 'lh3.googleusercontent.com' },
+      { hostname: '*.supabase.co' },
+    ],
   },
-};
+}
 
-export default nextConfig;
+export default nextConfig
