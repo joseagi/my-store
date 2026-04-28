@@ -1,3 +1,7 @@
+import dns from 'dns'
+// Force IPv4 — prevents OAuth timeout on Windows
+dns.setDefaultResultOrder('ipv4first')
+
 import NextAuth from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 import { PrismaAdapter } from '@auth/prisma-adapter'
@@ -10,6 +14,9 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      httpOptions: {
+        timeout: 10000, // 10 seconds timeout for Google auth requests
+      },
     }),
   ],
   callbacks: {
