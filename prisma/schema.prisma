@@ -11,6 +11,7 @@ model User {
   email     String    @unique
   name      String?
   image     String?
+  emailVerified DateTime?
   role      Role      @default(CUSTOMER)
   createdAt DateTime  @default(now())
   accounts  Account[]

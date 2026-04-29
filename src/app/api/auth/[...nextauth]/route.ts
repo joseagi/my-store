@@ -33,7 +33,21 @@ export const authOptions: NextAuthOptions = {
     signIn: '/login',      // Custom login page (you'll build this below)
     error: '/login',       // Auth errors redirect here too
   },
+   // Add this — exposes full error details
+  debug: true,
+  logger: {
+    error(code, metadata) {
+      console.error('[NextAuth Error]', code, metadata)
+    },
+    warn(code) {
+      console.warn('[NextAuth Warn]', code)
+    },
+    debug(code, metadata) {
+      console.log('[NextAuth Debug]', code, metadata)
+    },
+  },
 }
+
 
 const handler = NextAuth(authOptions)
 export { handler as GET, handler as POST }
