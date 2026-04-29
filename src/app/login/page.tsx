@@ -1,15 +1,31 @@
 'use client'
 
 import { signIn, useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { Store } from 'lucide-react'
+import { Store, AlertCircle } from 'lucide-react'
 
 export default function LoginPage() {
   const { data: session } = useSession()
   const router = useRouter()
+  const searchParams = useSearchParams()
+
+// Read error from URL
+  const error = searchParams.get('error')
+  const errorMessages: Record<string, string> = {
+    OAuthCallback: 'Authentication failed. Please try again.',
+    OAuthCreateAccount: 'Could not create account. Database may be unavailable.',
+    Callback: 'Sign in callback failed. Check server logs.',
+    AccessDenied: 'Access denied. You may need to be added as a test user in Google Console.',
+    OAuthSignin: 'Could not start sign in flow.',
+    Default: 'An unknown error occurred.',
+  }
+
+  const errorMessage = error
+    ? (errorMessages[error] ?? errorMessages.Default)
+    : null
 
   // Already signed in? Redirect to homepage
   useEffect(() => {
@@ -31,6 +47,18 @@ export default function LoginPage() {
             Sign in to track orders and checkout faster
           </p>
         </div>
+
+         {/* Show error if present */}
+        {errorMessage && (
+          <div className="flex items-start gap-3 bg-destructive/10 text-destructive rounded-lg px-4 py-3 text-sm">
+            <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+            <div>
+              <p className="font-medium">Sign in failed</p>
+              <p className="text-xs mt-0.5 opacity-80">{errorMessage}</p>
+              <p className="text-xs mt-0.5 opacity-60">Error code: {error}</p>
+            </div>
+          </div>
+        )}
 
         <div className="space-y-3">
           <Button
