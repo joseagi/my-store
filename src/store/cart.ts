@@ -30,16 +30,22 @@ export const useCartStore = create<CartStore>()(
         if (existing) {
           set(state => ({
             items: state.items.map(i =>
-              i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
-            )
+              i.id === item.id
+                ? { ...i, quantity: i.quantity + 1 }
+                : i
+            ),
           }))
         } else {
-          set(state => ({ items: [...state.items, { ...item, quantity: 1 }] }))
+          set(state => ({
+            items: [...state.items, { ...item, quantity: 1 }],
+          }))
         }
       },
 
       removeItem: (id) =>
-        set(state => ({ items: state.items.filter(i => i.id !== id) })),
+        set(state => ({
+          items: state.items.filter(i => i.id !== id),
+        })),
 
       updateQuantity: (id, quantity) => {
         if (quantity <= 0) {
@@ -47,15 +53,22 @@ export const useCartStore = create<CartStore>()(
           return
         }
         set(state => ({
-          items: state.items.map(i => i.id === id ? { ...i, quantity } : i)
+          items: state.items.map(i =>
+            i.id === id ? { ...i, quantity } : i
+          ),
         }))
       },
 
       clearCart: () => set({ items: [] }),
 
-      total: () => get().items.reduce((sum, i) => sum + i.price * i.quantity, 0),
+      total: () =>
+        get().items.reduce(
+          (sum, i) => sum + i.price * i.quantity,
+          0
+        ),
 
-      itemCount: () => get().items.reduce((sum, i) => sum + i.quantity, 0),
+      itemCount: () =>
+        get().items.reduce((sum, i) => sum + i.quantity, 0),
     }),
     { name: 'cart-storage' }
   )

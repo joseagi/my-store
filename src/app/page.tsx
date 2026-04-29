@@ -1,65 +1,113 @@
-import Image from "next/image";
+import { prisma } from '@/lib/prisma'
+import { ProductGrid } from '@/components/ui/products/ProductGrid'
+import { CategoryTabs } from '@/components/ui/products/CategoryTabs'
+import { Button } from '@/components/ui/button'
+import Link from 'next/link'
+import Image from 'next/image'
+import { Suspense } from 'react'
 
-export default function Home() {
+async function getProducts(category?: string) {
+  return prisma.product.findMany({
+    where: {
+      stock: { gt: 0 },
+      ...(category ? { category } : {}),
+    },
+    orderBy: { createdAt: 'desc' },
+  })
+}
+
+async function getCategories() {
+  const products = await prisma.product.findMany({
+    select: { category: true },
+    where: { stock: { gt: 0 } },
+    distinct: ['category'],
+  })
+  return [
+    'All',
+    ...products
+      .map(p => p.category)
+      .filter((c): c is string => c !== null),
+  ]
+}
+
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: { category?: string }
+}) {
+  const [products, categories] = await Promise.all([
+    getProducts(searchParams.category),
+    getCategories(),
+  ])
+
+  const heroProduct = products[0]
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div>
+      {/* Hero */}
+      <section className="bg-muted/40 border-b">
+        <div className="container mx-auto px-4 py-12 md:py-20 flex flex-col md:flex-row items-center gap-8">
+          <div className="flex-1 space-y-4 text-center md:text-left">
+            <span className="text-sm font-medium text-primary uppercase tracking-widest">
+              New Collection
+            </span>
+            <h1 className="text-4xl md:text-5xl font-bold leading-tight">
+              Quality that<br />speaks for itself
+            </h1>
+            <p className="text-muted-foreground text-lg max-w-md mx-auto md:mx-0">
+              Carefully selected products built to last.
+              Free delivery on orders over £50.
+            </p>
+            <div className="flex gap-3 justify-center md:justify-start">
+              <a href="#products">
+                <Button size="lg">Shop now</Button>
+              </a>
+            </div>
+          </div>
+
+          {heroProduct && (
+            <div className="flex-1 relative aspect-square w-full max-w-sm rounded-2xl overflow-hidden">
+              <Image
+                src={heroProduct.images[0]}
+                alt={heroProduct.name}
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
+          )}
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      {/* Trust bar */}
+      <section className="border-b bg-background">
+        <div className="container mx-auto px-4 py-3">
+          <div className="flex flex-wrap justify-center gap-4 md:gap-10 text-xs text-muted-foreground">
+            <span>✓ Free delivery over £50</span>
+            <span>✓ 30-day returns</span>
+            <span>✓ Secure checkout</span>
+            <span>✓ UK-based support</span>
+          </div>
         </div>
-      </main>
+      </section>
+
+      {/* Products */}
+      <section id="products" className="container mx-auto px-4 py-10">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-semibold">
+            {searchParams.category ?? 'All Products'}
+          </h2>
+          <span className="text-sm text-muted-foreground">
+            {products.length} items
+          </span>
+        </div>
+
+        <Suspense>
+          <CategoryTabs categories={categories} />
+        </Suspense>
+
+        <ProductGrid products={products} />
+      </section>
     </div>
-  );
+  )
 }
