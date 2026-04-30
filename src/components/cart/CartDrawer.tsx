@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useMounted } from '@/hooks/useMounted' 
 import Link from 'next/link'
 import {
   Sheet, SheetContent, SheetHeader,
@@ -20,10 +20,8 @@ export function CartDrawer() {
   const shippingCost = orderTotal >= 50 ? 0 : 4.99
   const grandTotal = orderTotal + shippingCost
 
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => {
-    setMounted(true)
-}, [])
+ 
+ const mounted = useMounted()
 
   return (
     <Sheet>
