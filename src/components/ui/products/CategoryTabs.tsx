@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
-import { useTransition } from 'react'
+import { useTransition, Suspense } from 'react'
 import { cn } from '@/lib/utils'
 
 export function CategoryTabs({
@@ -29,6 +29,7 @@ export function CategoryTabs({
   }
 
   return (
+    <Suspense fallback = {
     <div className={cn(
       'flex gap-2 flex-wrap mb-6 transition-opacity',
       isPending && 'opacity-60 pointer-events-none'
@@ -48,5 +49,6 @@ export function CategoryTabs({
         </button>
       ))}
     </div>
+    }></Suspense>
   )
 }

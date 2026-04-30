@@ -21,7 +21,9 @@ export function CartDrawer() {
   const grandTotal = orderTotal + shippingCost
 
   const [mounted, setMounted] = useState(false)
-  useEffect(() => setMounted(true), [])
+  useEffect(() => {
+    setMounted(true)
+}, [])
 
   return (
     <Sheet>
