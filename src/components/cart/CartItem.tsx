@@ -23,7 +23,7 @@ export function CartItem({ item }: CartItemProps) {
 
   return (
     <div className="flex gap-3">
-      <Link href={`/products/${item.slug}`} className="flex-shrink-0">
+      <Link href={`/products/${item.slug}`} className="shrink-0">
         <div className="relative w-20 h-20 rounded-lg overflow-hidden bg-muted">
           <Image
             src={item.image}
@@ -75,7 +75,7 @@ export function CartItem({ item }: CartItemProps) {
         </div>
       </div>
 
-      <div className="text-sm font-semibold flex-shrink-0">
+      <div className="text-sm font-semibold shrink-0">
         {formatPrice(item.price * item.quantity)}
       </div>
     </div>

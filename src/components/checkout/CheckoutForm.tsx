@@ -352,6 +352,7 @@ export function CheckoutForm() {
                         src={item.image}
                         alt={item.name}
                         fill
+                        sizes="56px"
                         className="object-cover"
                       />
                       <span className="absolute -top-1.5 -right-1.5 bg-muted-foreground text-background text-xs w-5 h-5 rounded-full flex items-center justify-center font-medium">

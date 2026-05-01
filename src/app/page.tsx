@@ -30,13 +30,16 @@ async function getCategories() {
   ]
 }
 
-export default async function HomePage({
-  searchParams,
-}: {
-  searchParams: { category?: string }
-}) {
+interface Props {
+  // SearchParams is now a promise in Next.js 15
+  searchParams: Promise<{ category?: string }>
+}
+export default async function HomePage({ searchParams }: Props) {
+  // ✅ Await it before using
+  const { category } = await searchParams
+
   const [products, categories] = await Promise.all([
-    getProducts(searchParams.category),
+    getProducts(category),
     getCategories(),
   ])
 
@@ -95,7 +98,7 @@ export default async function HomePage({
       <section id="products" className="container mx-auto px-4 py-10">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-semibold">
-            {searchParams.category ?? 'All Products'}
+            {category ?? 'All Products'}
           </h2>
           <span className="text-sm text-muted-foreground">
             {products.length} items

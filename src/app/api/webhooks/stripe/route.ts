@@ -45,6 +45,7 @@ export async function POST(req: NextRequest) {
 
       if (!orderId) break
 
+      //Mark the order as paid
       await prisma.order.update({
         where: { id: orderId },
         data: {
@@ -53,6 +54,7 @@ export async function POST(req: NextRequest) {
         },
       })
 
+      // Decrement Stock
       const orderItems = await prisma.orderItem.findMany({
         where: { orderId },
       })
