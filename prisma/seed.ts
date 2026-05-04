@@ -54,7 +54,7 @@ const products = [
     price: 29.99,
     stock: 25,
     category: 'Clothing',
-    images: ['https://mrdqsyihkarznjjpoyif.supabase.co/storage/v1/object/public/product-images/Black%20longsleeves.jpeg'],
+    images: ['https://mrdqsyihkarznjjpoyif.supabase.co/storage/v1/object/public/product-images/Black%20Jorts.jpeg'],
   },
   {
     name: 'Black and White Jorts',
@@ -71,17 +71,17 @@ const products = [
     description: 'Stonewashed linen cover with a feather insert. 50×50cm.',
     price: 39.99,
     stock: 90,
-    category: 'Clothing',
+    category: 'Accessories',
     images: ['https://mrdqsyihkarznjjpoyif.supabase.co/storage/v1/object/public/product-images/Black%20and%20Red%20Beanie.jpeg'],
   },
   {
-    name: 'Minimalist Watch',
-    slug: 'minimalist-watch',
+    name: 'White Tee',
+    slug: 'white-tee',
     description: '38mm brushed steel case, sapphire crystal glass, genuine leather strap.',
     price: 199.99,
     stock: 30,
     category: 'Accessories',
-    images: ['https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80'],
+    images: ['https://mrdqsyihkarznjjpoyif.supabase.co/storage/v1/object/public/product-images/White%20Tee.jpeg'],
   },
 ]
 
