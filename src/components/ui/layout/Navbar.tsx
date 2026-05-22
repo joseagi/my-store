@@ -2,10 +2,9 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { ShoppingCart, Store, Menu } from 'lucide-react'
+import { Store, Menu } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
-import { Badge } from '@/components/ui/badge'
 import { useSession, signOut } from 'next-auth/react'
 import { CartDrawer } from '@/components/cart/CartDrawer'
 
@@ -38,6 +37,8 @@ function AuthButton() {
               src={session.user.image}
               alt={session.user.name ?? 'User'}
               fill
+              sizes="32px"
+              priority
               className="rounded-full object-cover"
             />
           ) : (

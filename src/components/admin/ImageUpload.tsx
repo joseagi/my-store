@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
-import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 import { Upload, X, Loader2 } from 'lucide-react'
 import { toast } from '@/components/ui/use-toast'

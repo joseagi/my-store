@@ -29,6 +29,8 @@ export function CartItem({ item }: CartItemProps) {
             src={item.image}
             alt={item.name}
             fill
+            sizes="80px"
+            priority
             className="object-cover hover:scale-105 transition-transform"
           />
         </div>

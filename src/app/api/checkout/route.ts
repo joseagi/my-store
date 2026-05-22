@@ -134,12 +134,12 @@ export async function POST(req: NextRequest) {
       line_items: lineItems,
       customer_email: shippingAddress.email,
       metadata: {
-        orderId: order.id,
+        orderId: order.id,   // Link back to your DB order
         userId: session?.user?.id ?? 'guest',
       },
       success_url: `${process.env.NEXTAUTH_URL}/success?orderId=${order.id}&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXTAUTH_URL}/checkout?cancelled=true`,
-      expires_at: Math.floor(Date.now() / 1000) + 30 * 60,
+      expires_at: Math.floor(Date.now() / 1000) + 30 * 60,  // 30 mins expiry
     })
 
     return NextResponse.json({ url: stripeSession.url })

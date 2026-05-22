@@ -70,7 +70,9 @@ export default async function ProductPage({ params }: Props) {
                     src={img}
                     alt={`${product.name} view ${i + 1}`}
                     fill
+                    sizes="64px"
                     className="object-cover"
+                    priority
                   />
                 </div>
               ))}

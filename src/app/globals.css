@@ -121,10 +121,17 @@
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
-  }
   html {
     @apply font-sans;
+    scroll-behavior: smooth;
+    scrollbar-gutter: stable;
+  }
+  body {
+    @apply bg-background text-foreground;
+    overflow-x: hidden;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
   }
 }

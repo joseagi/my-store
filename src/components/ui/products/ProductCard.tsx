@@ -85,17 +85,19 @@ export function ProductCard({
             size="sm"
             onClick={handleAdd}
             disabled={product.stock === 0 || added}
-            className="gap-1.5 text-xs shrink-0"
+            className="gap-1 text-xs px-2 shrink-0"
           >
             {added ? (
               <>
                 <Check className="h-3 w-3" />
-                Added
+                <span className="hidden sm:inline">Added</span>
+                <span className="sm:hidden">✓</span>
               </>
             ) : (
               <>
                 <ShoppingCart className="h-3 w-3" />
-                Add
+                <span className="hidden sm:inline">Add</span>
+                <span className="sm:hidden">+</span>
               </>
             )}
           </Button>

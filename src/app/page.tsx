@@ -2,7 +2,6 @@ import { prisma } from '@/lib/prisma'
 import { ProductGrid } from '@/components/ui/products/ProductGrid'
 import { CategoryTabs } from '@/components/ui/products/CategoryTabs'
 import { Button } from '@/components/ui/button'
-import Link from 'next/link'
 import Image from 'next/image'
 import { Suspense } from 'react'
 
@@ -74,6 +73,7 @@ export default async function HomePage({ searchParams }: Props) {
                 src={heroProduct.images[0]}
                 alt={heroProduct.name}
                 fill
+                sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover"
                 priority
               />

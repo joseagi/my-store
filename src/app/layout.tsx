@@ -10,10 +10,27 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: {
-    default: 'My Store',
+    default: 'My Store — Quality products, fast delivery',
     template: '%s | My Store',
   },
-  description: 'Quality products, fast delivery',
+  description: 'Shop our curated collection of quality products. Free delivery over £50, 30-day returns.',
+  keywords: ['shop', 'online store', 'quality products', 'fast delivery'],
+  openGraph: {
+    type: 'website',
+    locale: 'en_GB',
+    siteName: 'My Store',
+    title: 'My Store — Quality products, fast delivery',
+    description: 'Shop our curated collection of quality products.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'My Store',
+    description: 'Quality products, fast delivery',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 }
 
 

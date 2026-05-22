@@ -36,6 +36,7 @@ export async function POST(req: NextRequest) {
     )
   }
 
+  // Handle each event type
   switch (event.type) {
 
     case 'checkout.session.completed': {
@@ -54,7 +55,7 @@ export async function POST(req: NextRequest) {
         },
       })
 
-      // Decrement Stock
+      // Decrement Stock for each item in the order
       const orderItems = await prisma.orderItem.findMany({
         where: { orderId },
       })
