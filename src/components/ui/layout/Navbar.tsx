@@ -80,11 +80,11 @@ function AuthButton() {
 export function Navbar() {
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
+    <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/95 backdrop-blur">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 font-semibold text-lg">
+        <Link href="/" className="logo-pearl flex items-center gap-2 font-semibold text-lg">
           <Store className="h-5 w-5" />
           16K
         </Link>
