@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { prisma } from '@/lib/prisma'
 import { ProductGrid } from '@/components/ui/products/ProductGrid'
 import { CategoryTabs } from '@/components/ui/products/CategoryTabs'

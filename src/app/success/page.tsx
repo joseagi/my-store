@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { prisma } from '@/lib/prisma'
 import { stripe } from '@/lib/stripe'
 import { redirect } from 'next/navigation'
@@ -9,7 +11,7 @@ import { ClearCartOnSuccess } from '@/components/cart/ClearCartOnSuccess'
 import { type CheckoutFormData } from '@/lib/schemas'
 
 interface Props {
-  searchParams: { orderId?: string; session_id?: string }
+  searchParams: Promise<{ orderId?: string; session_id?: string }>
 }
 
 export default async function SuccessPage({ searchParams }: Props) {
