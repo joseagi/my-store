@@ -8,6 +8,7 @@ function createPrismaClient() {
     connectionString: process.env.DATABASE_URL!,
     ssl: { rejectUnauthorized: false },
     connectionTimeoutMillis: 30000,
+    max: 1,
   })
   return new PrismaClient({
     adapter,
