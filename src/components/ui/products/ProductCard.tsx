@@ -29,7 +29,9 @@ export function ProductCard({
   const [added, setAdded] = useState(false)
   const addItem = useCartStore(state => state.addItem)
 
-  function handleAdd() {
+  function handleAdd(e: React.MouseEvent) {
+    e.preventDefault()
+    e.stopPropagation()
     addItem({
       id: product.id,
       name: product.name,
@@ -42,29 +44,30 @@ export function ProductCard({
   }
 
   return (
-    <div className="group border rounded-xl overflow-hidden hover:shadow-md transition-shadow bg-background">
-      <Link href={`/products/${product.slug}`}>
-        <div className="relative aspect-square bg-muted overflow-hidden">
-          <Image
-            src={product.images[0] ?? '/placeholder.jpg'}
-            alt={product.name}
-            fill
-            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
-            priority={index < 4}
-          />
-          {product.stock > 0 && product.stock < 10 && (
-            <Badge className="absolute top-2 right-2 bg-amber-500 text-white">
-              Only {product.stock} left
-            </Badge>
-          )}
-          {product.stock === 0 && (
-            <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-              <Badge variant="secondary">Sold out</Badge>
-            </div>
-          )}
-        </div>
-      </Link>
+    <Link
+      href={`/products/${product.slug}`}
+      className="group border rounded-xl overflow-hidden hover:shadow-md transition-shadow bg-background block"
+    >
+      <div className="relative aspect-square bg-muted overflow-hidden">
+        <Image
+          src={product.images[0] ?? '/placeholder.jpg'}
+          alt={product.name}
+          fill
+          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+          className="object-cover group-hover:scale-105 transition-transform duration-300"
+          priority={index < 4}
+        />
+        {product.stock > 0 && product.stock < 10 && (
+          <Badge className="absolute top-2 right-2 bg-amber-500 text-white">
+            Only {product.stock} left
+          </Badge>
+        )}
+        {product.stock === 0 && (
+          <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+            <Badge variant="secondary">Sold out</Badge>
+          </div>
+        )}
+      </div>
 
       <div className="p-4">
         {product.category && (
@@ -72,11 +75,9 @@ export function ProductCard({
             {product.category}
           </p>
         )}
-        <Link href={`/products/${product.slug}`}>
-          <h3 className="font-medium text-sm leading-tight hover:text-primary transition-colors line-clamp-2">
-            {product.name}
-          </h3>
-        </Link>
+        <h3 className="font-heading font-medium text-sm leading-tight group-hover:text-primary transition-colors line-clamp-2">
+          {product.name}
+        </h3>
         <div className="flex items-center justify-between mt-3 gap-2">
           <span className="text-base font-semibold">
             {formatPrice(product.price)}
@@ -85,7 +86,7 @@ export function ProductCard({
             size="sm"
             onClick={handleAdd}
             disabled={product.stock === 0 || added}
-            className="gap-1 text-xs px-2 shrink-0"
+            className="gap-1 text-xs px-2 shrink-0 relative z-10"
           >
             {added ? (
               <>
@@ -103,6 +104,6 @@ export function ProductCard({
           </Button>
         </div>
       </div>
-    </div>
+    </Link>
   )
 }

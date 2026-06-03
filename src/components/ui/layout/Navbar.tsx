@@ -84,17 +84,17 @@ export function Navbar() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         
         {/* Logo */}
-        <Link href="/" className="logo-pearl flex items-center gap-2 font-semibold text-lg">
+        <Link href="/" className="logo-pearl flex items-center gap-2 font-heading font-semibold text-lg">
           <Store className="h-5 w-5" />
           16K
         </Link>
 
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-6">
-          <Link href="/" className="text-sm hover:text-primary transition-colors">
+          <Link href="/" className="font-heading text-sm hover:text-primary transition-colors">
             Shop
           </Link>
-          <Link href="/about" className="text-sm hover:text-primary transition-colors">
+          <Link href="/about" className="font-heading text-sm hover:text-primary transition-colors">
             About
           </Link>
         </nav>
@@ -116,9 +116,9 @@ export function Navbar() {
             </SheetTrigger>
             <SheetContent>
               <nav className="flex flex-col gap-4 mt-8">
-                <Link href="/" className="text-lg">Shop</Link>
-                <Link href="/about" className="text-lg">About</Link>
-                <Link href="/login" className="text-lg">Sign in</Link>
+                <Link href="/" className="font-heading text-lg">Shop</Link>
+                <Link href="/about" className="font-heading text-lg">About</Link>
+                <Link href="/login" className="font-heading text-lg">Sign in</Link>
               </nav>
             </SheetContent>
           </Sheet>

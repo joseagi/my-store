@@ -55,7 +55,7 @@ export default async function HomePage({ searchParams }: Props) {
             <span className="text-sm font-medium text-primary uppercase tracking-widest">
               New Collection
             </span>
-            <h1 className="text-4xl md:text-5xl font-bold leading-tight">
+            <h1 className="font-heading text-4xl md:text-5xl font-bold leading-tight">
               Quality that<br />speaks for itself
             </h1>
             <p className="text-muted-foreground text-lg max-w-md mx-auto md:mx-0">
@@ -99,7 +99,7 @@ export default async function HomePage({ searchParams }: Props) {
       {/* Products */}
       <section id="products" className="container mx-auto px-4 py-10">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-semibold">
+          <h2 className="font-heading text-2xl font-semibold">
             {category ?? 'All Products'}
           </h2>
           <span className="text-sm text-muted-foreground">

@@ -1,12 +1,15 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Rye } from 'next/font/google'
 import './globals.css'
 import { Navbar } from '@/components/ui/layout/Navbar'
 import { Footer } from '@/components/ui/layout/Footer'
 import { Toaster } from '@/components/ui/sonner'
 import { SessionProvider } from '@/components/providers/SessionProvider'
 
-const inter = Inter({ subsets: ['latin'] })
+const rye = Rye({ subsets: ['latin'],
+  weight: '400',
+  variable: '--font-heading'
+})
 
 export const metadata: Metadata = {
   title: {
@@ -37,7 +40,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={rye.variable}>
         <SessionProvider>
         <div className="flex min-h-screen flex-col">
           <Navbar />

@@ -8,13 +8,12 @@ import type { Metadata } from 'next'
 import { ArrowLeft } from 'lucide-react'
 
 interface Props {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const product = await prisma.product.findUnique({
-    where: { slug: params.slug },
-  })
+  const { slug } = await params
+  const product = await prisma.product.findUnique({ where: { slug } })
   if (!product) return { title: 'Product not found' }
   return {
     title: product.name,
@@ -24,9 +23,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function ProductPage({ params }: Props) {
-  const product = await prisma.product.findUnique({
-    where: { slug: params.slug },
-  })
+  const { slug } = await params
+  const product = await prisma.product.findUnique({ where: { slug } })
 
   if (!product) notFound()
 
@@ -36,7 +34,6 @@ export default async function ProductPage({ params }: Props) {
   return (
     <div className="container mx-auto px-4 py-8 max-w-5xl">
 
-      {/* Back link */}
       <Link
         href="/"
         className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors"
@@ -100,10 +97,7 @@ export default async function ProductPage({ params }: Props) {
               }).format(product.price)}
             </span>
             {isLowStock && (
-              <Badge
-                variant="outline"
-                className="text-amber-600 border-amber-300 bg-amber-50"
-              >
+              <Badge variant="outline" className="text-amber-600 border-amber-300 bg-amber-50">
                 Only {product.stock} left
               </Badge>
             )}
@@ -118,7 +112,6 @@ export default async function ProductPage({ params }: Props) {
             {product.description}
           </p>
 
-          {/* Trust signals */}
           <div className="space-y-2 text-sm text-muted-foreground border rounded-xl p-4 bg-muted/30">
             <div className="flex items-center gap-2">
               <span>🚚</span>
