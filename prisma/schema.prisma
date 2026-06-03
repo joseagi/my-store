@@ -31,6 +31,7 @@ model Product {
   description String
   price       Float
   images      String[]
+  sizes       String[]    @default([])
   stock       Int         @default(0)
   category    String?
   createdAt   DateTime    @default(now())

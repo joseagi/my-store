@@ -26,13 +26,16 @@ const productFormSchema = z.object({
 type ProductFormData = z.infer<typeof productFormSchema>
 
 interface ProductFormProps {
-  initialData?: ProductFormData & { id?: string; images?: string[] }
+  initialData?: ProductFormData & { id?: string; images?: string[]; sizes?: string[] }
   mode: 'create' | 'edit'
 }
 
 export function ProductForm({ initialData, mode }: ProductFormProps) {
   const [images, setImages] = useState<string[]>(
     initialData?.images ?? []
+  )
+  const [sizesInput, setSizesInput] = useState(
+    (initialData?.sizes ?? []).join(', ')
   )
   const [uploading, setUploading] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -134,7 +137,11 @@ export function ProductForm({ initialData, mode }: ProductFormProps) {
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...data, images }),
+        body: JSON.stringify({
+          ...data,
+          images,
+          sizes: sizesInput.split(',').map(s => s.trim()).filter(Boolean),
+        }),
       })
 
       const result = await res.json()
@@ -312,6 +319,22 @@ export function ProductForm({ initialData, mode }: ProductFormProps) {
             </p>
           )}
         </div>
+      </div>
+
+      {/* Sizes */}
+      <div className="space-y-1.5">
+        <Label htmlFor="sizes">
+          Sizes
+          <span className="text-muted-foreground font-normal ml-1 text-xs">
+            (comma-separated, e.g. 28, 30, 32 or S, M, L)
+          </span>
+        </Label>
+        <Input
+          id="sizes"
+          placeholder="28, 30, 32, 34, 36"
+          value={sizesInput}
+          onChange={e => setSizesInput(e.target.value)}
+        />
       </div>
 
       {/* Category */}

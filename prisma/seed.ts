@@ -14,6 +14,7 @@ const products = [
   {
     name: 'Classic White Tee',
     slug: 'classic-white-tee',
+    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     description: 'A timeless crew-neck essential in 100% organic cotton. Relaxed fit, pre-washed for softness.',
     price: 29.99,
     stock: 150,
@@ -23,6 +24,7 @@ const products = [
   {
     name: 'Grey Joggers',
     slug: 'grey-joggers',
+    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     description: 'Tapered slim fit in stretch denim. Mid-rise with a clean, minimal finish.',
     price: 79.99,
     stock: 80,
@@ -32,6 +34,7 @@ const products = [
   {
     name: 'Black Longsleeves',
     slug: 'black-longsleeves',
+    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     description: 'Full-grain leather with an adjustable strap and three interior pockets.',
     price: 49.99,
     stock: 40,
@@ -41,6 +44,7 @@ const products = [
   {
     name: 'White Sneakers',
     slug: 'white-sneakers',
+    sizes: ['30', '32', '34', '36', '38', '40', '42', '44', '46'],
     description: 'Clean court-style sneakers with a vulcanised sole and padded collar.',
     price: 89.99,
     stock: 60,
@@ -50,6 +54,7 @@ const products = [
   {
     name: 'Black Jorts',
     slug: 'black-jorts',
+    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     description: 'Double-breasted overcoat in 80% wool. Notch lapels and a structured shoulder.',
     price: 29.99,
     stock: 25,
@@ -59,6 +64,7 @@ const products = [
   {
     name: 'Black and White Jorts',
     slug: 'black-and-white-jorts',
+    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     description: 'Hand-thrown stoneware mug, 350ml. Dishwasher safe with a matte glaze.',
     price: 24.99,
     stock: 200,
@@ -68,6 +74,7 @@ const products = [
   {
     name: 'Black and Red Beanie',
     slug: 'black-and-red-beanie',
+    sizes: ['One Size'],
     description: 'Stonewashed linen cover with a feather insert. 50×50cm.',
     price: 39.99,
     stock: 90,
@@ -77,6 +84,7 @@ const products = [
   {
     name: 'White Tee',
     slug: 'white-tee',
+    Sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     description: '38mm brushed steel case, sapphire crystal glass, genuine leather strap.',
     price: 199.99,
     stock: 30,
@@ -93,14 +101,14 @@ async function main() {
       update: {},
       create: product,
     })
-    console.log('\n Seeded ${product.name}')
+    console.log(`\n Seeded ${product.name}`)
   }
   console.log(`Seeded ${products.length} products successfully`)
 }
 
 main()
   .catch((e) => {
-    console.error('\n Seed failed:', e.message)
+    console.error(`\n Seed failed:`, e.message)
     process.exit(1)
   })
   .finally(async () => {
