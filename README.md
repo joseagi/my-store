@@ -1,6 +1,6 @@
 # My Store — Full-Stack E-commerce Platform
 
-A production-ready e-commerce web application built with Next.js 14, Prisma 7, Supabase, Stripe, and deployed on Vercel.
+A production-ready e-commerce web application built with Next.js 15, Prisma 7, Supabase, Stripe, and deployed on Vercel.
 
 ---
 
@@ -31,8 +31,13 @@ A production-ready e-commerce web application built with Next.js 14, Prisma 7, S
 
 ### Customer Features
 - Browse products with category filtering
-- Product detail pages with multiple images
+- Product detail pages with image gallery (arrow navigation + thumbnails)
+- Size selection required before adding to cart — "Select size" prompt enforced
+- Size guide modal with measurement diagram on each product page
+- Shipping policy page linked from every product detail page
+- Cart supports the same product in multiple sizes as separate line items
 - Shopping cart with quantity controls (persists across sessions)
+- Full cart page (`/cart`) with order summary, shipping threshold, and checkout
 - Guest and authenticated checkout
 - Stripe-powered secure payments
 - Order confirmation with full details
@@ -43,6 +48,7 @@ A production-ready e-commerce web application built with Next.js 14, Prisma 7, S
 - Protected admin panel (`/admin`)
 - Revenue, orders, products, and customer stats dashboard
 - Full product CRUD with image upload to Supabase Storage
+- Size management per product — tag-style input (type and press Enter to add, click × to remove)
 - Low stock alerts
 - Order management with inline status updates
 
@@ -228,6 +234,7 @@ model Product {
   description String
   price       Float
   images      String[]
+  sizes       String[]    @default([])
   stock       Int         @default(0)
   category    String?
   orderItems  OrderItem[]
@@ -445,7 +452,7 @@ Features planned for future iterations:
 - [ ] Discount codes and coupon system
 - [ ] Product reviews and ratings
 - [ ] Wishlist functionality
-- [ ] Multiple product variants (size, colour)
+- [x] Multiple product variants (size selection) — completed 2026-06-03
 - [ ] Inventory alerts via email
 - [ ] Analytics dashboard with charts
 - [ ] Multi-currency support
@@ -453,7 +460,77 @@ Features planned for future iterations:
 
 ---
 
-## Built With
+## Changelog
+
+### 2026-06-03
+
+**Font**
+- Replaced default heading font with **Rye** (`next/font/google`, weight `400`) loaded once in `layout.tsx` and applied site-wide via a `--font-heading` CSS variable and `font-heading` Tailwind utility class
+- Applied to Navbar, Footer, ProductCard, homepage headings, and product detail page
+
+**Product Cards**
+- Removed the "Add to Cart" button from product listing cards — customers must click through to the detail page to select a size and add to cart
+- The entire card is now a single clickable link
+
+**Product Detail Page** (`src/app/products/[slug]/page.tsx` + `src/components/ui/products/ProductDetail.tsx`)
+- New image gallery: main image with left/right arrow navigation and thumbnail strip
+- Size selector: buttons displayed as `[S]` `[M]` `[L]` etc.; selecting a size highlights it
+- Add to cart enforced: button shows "Select size" and is disabled until a size is chosen; changes to "Add to cart" once selected
+- Size guide modal: fixed overlay with SVG trouser measurement diagram and a W28–W40 size table
+- Shipping policy link navigates to `/shipping`
+
+**Shipping Policy Page** (`src/app/shipping/page.tsx`)
+- New page covering processing time, UK delivery options, international shipping, tracking, and returns
+
+**Database — `sizes` field**
+- Added `sizes String[] @default([])` to the `Product` model in `prisma/schema.prisma`
+- Migration file generated: `prisma/migrations/20260603185232_add_product_sizes/migration.sql`
+- If the Prisma CLI cannot connect (Supabase project paused), apply manually in the Supabase SQL Editor:
+  ```sql
+  ALTER TABLE "Product" ADD COLUMN IF NOT EXISTS "sizes" TEXT[] DEFAULT ARRAY[]::TEXT[];
+  ```
+
+**Prisma Configuration**
+- `prisma.config.ts` updated to use `DIRECT_URL` (port 5432, direct connection) for migrations and fall back to `DATABASE_URL` (port 6543, pooler) if not set
+- Removed `url`/`directUrl` from `schema.prisma` — Prisma 7 requires these in `prisma.config.ts` only
+
+**Admin — ProductForm sizes**
+- Added tag-style size input to the product create/edit form: type a value and press Enter or comma, or click Add; duplicate sizes are ignored; each tag has an × button to remove it
+- Sizes are included in the API payload on submit
+- Added `sizes: z.array(z.string()).optional().default([])` to the admin products API Zod schema
+
+**Seed file**
+- Fixed template literal bug: `'\n Seeded ${product.name}'` (single quotes) changed to `` `\n Seeded ${product.name}` `` (backticks)
+- All seed products now include a `sizes` array
+
+---
+
+### 2026-06-04
+
+**ProductForm — TypeScript fixes** (`src/components/admin/ProductForm.tsx`)
+- Fixed broken `onSubmit`: the function body was split — an empty `try` block closed early and the actual `fetch` logic was floating outside the function; rewrote as a single clean `try/catch/finally`
+- Fixed `sizeInput` state: it was referenced before being declared (was misnamed `sizesInput`)
+- Removed `sizes` from the Zod schema (`.default([])` caused a type mismatch between Zod's input/output types that broke `zodResolver`); `sizes` is now managed via `useState` and passed manually in the submit body
+
+**Cart — size-aware line items** (`src/store/cart.ts`, `src/components/cart/CartItem.tsx`, `src/components/ui/products/ProductDetail.tsx`)
+- **Problem:** adding the same product twice with different sizes incremented quantity on one row instead of creating two separate cart entries
+- **Fix:** introduced `cartKey` (`${productId}-${size ?? ''}`) as the unique identifier per cart line item
+- `removeItem` and `updateQuantity` now operate on `cartKey` instead of `id`
+- `CartItem` component shows the selected size beneath the product name (e.g. `Size: M`)
+- `ProductDetail` passes `size` when calling `addItem` so the correct `cartKey` is built
+
+**Cart drawer close button** (`src/components/ui/sheet.tsx`)
+- The Sheet close button had `bg-secondary` applied, showing as a white square in the top-right of the drawer; changed to `bg-transparent hover:bg-transparent text-foreground`
+
+**Full cart page** (`src/app/cart/page.tsx`)
+- Created the missing route — "View full cart" was linking to `/cart` but no page existed
+- Two-column layout on desktop: item list (left) and sticky order summary (right)
+- Order summary shows each line item with its size, subtotal, shipping (free over £50), and total
+- "Clear cart" and "Continue shopping" actions in the footer
+- Fixed `useMounted` bug from the draft component (function was assigned without calling it)
+- All React keys use `item.cartKey`
+
+---
 
 - [Next.js](https://nextjs.org) — React framework
 - [Tailwind CSS](https://tailwindcss.com) — Utility-first CSS
