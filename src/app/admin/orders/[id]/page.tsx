@@ -123,6 +123,11 @@ export default async function OrderDetailPage({ params }: Props) {
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-sm">{item.product.name}</p>
                     <p className="text-xs text-muted-foreground mt-0.5">
+                      {item.size && (
+                        <span className="inline-flex items-center mr-2 px-1.5 py-0.5 rounded bg-muted font-heading uppercase tracking-wide">
+                          {item.size}
+                        </span>
+                      )}
                       {formatPrice(item.price)} each · qty {item.quantity}
                     </p>
                   </div>

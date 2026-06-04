@@ -19,6 +19,8 @@ const checkoutBodySchema = z.object({
     image: z.string(),
     quantity: z.number().int().positive(),
     slug: z.string(),
+    size: z.string().optional(),
+    cartKey: z.string().optional(),
   })),
   shippingAddress: z.object({
     email: z.string().email(),
@@ -40,6 +42,8 @@ type CartItem = {
   image: string
   quantity: number
   slug: string
+  size?: string
+  cartKey?: string
 }
 
 export async function POST(req: NextRequest) {
@@ -92,6 +96,7 @@ export async function POST(req: NextRequest) {
             productId: item.id,
             quantity: item.quantity,
             price: item.price,
+            size: item.size ?? null,
           })),
         },
       },
