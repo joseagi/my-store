@@ -17,7 +17,7 @@ export function CartDrawer() {
   const { items, total, itemCount } = useCartStore()
   const count = itemCount()
   const orderTotal = total()
-  const shippingCost = orderTotal >= 50 ? 0 : 4.99
+  const shippingCost = orderTotal >= 75 ? 0 : 8.99
   const grandTotal = orderTotal + shippingCost
 
  
@@ -95,9 +95,9 @@ export function CartDrawer() {
                 </div>
               </div>
 
-              {orderTotal < 50 && (
+              {orderTotal < 75 && (
                 <p className="text-xs text-center text-muted-foreground bg-muted rounded-lg py-2 px-3">
-                  Add {formatPrice(50 - orderTotal)} more for free delivery
+                  Add {formatPrice(75 - orderTotal)} more for free delivery
                 </p>
               )}
 

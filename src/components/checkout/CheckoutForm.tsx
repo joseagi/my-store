@@ -244,7 +244,7 @@ const selectClass =
 export function CheckoutForm() {
   const { items, total } = useCartStore()
   const orderTotal = total()
-  const shippingCost = orderTotal >= 50 ? 0 : 4.99
+  const shippingCost = orderTotal >= 75 ? 0 : 8.99
   const grandTotal = orderTotal + shippingCost
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -270,7 +270,7 @@ export function CheckoutForm() {
     formState: { errors },
   } = useForm<CheckoutFormData>({
     resolver: zodResolver(checkoutSchema),
-    defaultValues: { country: 'GB', phone: '', termsAccepted: false },
+    defaultValues: { country: 'CA', phone: '', termsAccepted: false },
   })
 
   const selectedCountry = useWatch({ control, name: 'country' }) ?? 'GB'
@@ -550,7 +550,7 @@ export function CheckoutForm() {
                 </div>
                 {shippingCost > 0 && (
                   <p className="text-xs text-muted-foreground bg-muted rounded p-2 text-center">
-                    Add {formatPrice(50 - orderTotal)} more for free delivery
+                    Add {formatPrice(75 - orderTotal)} more for free delivery (CA$75 minimum)
                   </p>
                 )}
                 <div className="flex justify-between font-semibold text-base border-t pt-2">

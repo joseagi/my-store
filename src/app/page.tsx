@@ -52,15 +52,12 @@ export default async function HomePage({ searchParams }: Props) {
       <section className="bg-muted/40 border-b">
         <div className="container mx-auto px-4 py-12 md:py-20 flex flex-col md:flex-row items-center gap-8">
           <div className="flex-1 space-y-4 text-center md:text-left">
-            <span className="text-sm font-medium text-primary uppercase tracking-widest">
-              New Collection
-            </span>
             <h1 className="font-heading text-4xl md:text-5xl font-bold leading-tight">
               Quality that<br />speaks for itself
             </h1>
             <p className="text-muted-foreground text-lg max-w-md mx-auto md:mx-0">
               Carefully selected products built to last.
-              Free delivery on orders over £50.
+              Free delivery on orders over $75.
             </p>
             <div className="flex gap-3 justify-center md:justify-start">
               <a href="#products">
@@ -88,10 +85,10 @@ export default async function HomePage({ searchParams }: Props) {
       <section className="border-b bg-background">
         <div className="container mx-auto px-4 py-3">
           <div className="flex flex-wrap justify-center gap-4 md:gap-10 text-xs text-muted-foreground">
-            <span>✓ Free delivery over £50</span>
+            <span>✓ Free delivery over $75</span>
             <span>✓ 30-day returns</span>
             <span>✓ Secure checkout</span>
-            <span>✓ UK-based support</span>
+            <span>✓ CAN-based support</span>
           </div>
         </div>
       </section>

@@ -11,7 +11,7 @@ import { useMounted } from '@/hooks/useMounted'
 export default function CartPage() {
   const { items, total, clearCart } = useCartStore()
   const orderTotal = total()
-  const shippingCost = orderTotal >= 50 ? 0 : 4.99
+  const shippingCost = orderTotal >= 75 ? 0 : 8.99
   const grandTotal = orderTotal + shippingCost
   const mounted = useMounted()
 
@@ -124,7 +124,7 @@ export default function CartPage() {
                 </div>
                 {shippingCost > 0 && (
                   <p className="text-xs text-muted-foreground bg-muted rounded-lg p-2 text-center">
-                    Add {formatPrice(50 - orderTotal)} more for free delivery
+                    Add {formatPrice(75 - orderTotal)} more for free delivery (CA$75 minimum)
                   </p>
                 )}
                 <div className="flex justify-between font-semibold text-base border-t pt-2">

@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
       (sum: number, i: CartItem) => sum + i.price * i.quantity,
       0
     )
-    const shippingCost = subtotal >= 50 ? 0 : 4.99
+    const shippingCost = subtotal >= 75 ? 0 : 8.99
     const total = subtotal + shippingCost
 
     // Create order in DB with PENDING status
@@ -101,7 +101,7 @@ export async function POST(req: NextRequest) {
     const lineItems = [
       ...verifiedItems.map((item: CartItem) => ({
         price_data: {
-          currency: 'gbp',
+          currency: 'cad',
           product_data: {
             name: item.name,
             images: [item.image],
@@ -116,7 +116,7 @@ export async function POST(req: NextRequest) {
     if (shippingCost > 0) {
       lineItems.push({
         price_data: {
-          currency: 'gbp',
+          currency: 'cad',
           product_data: { 
            name: 'Standard Shipping',
            images:[],
