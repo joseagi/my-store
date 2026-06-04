@@ -123,7 +123,7 @@ export default function ShippingPage() {
           <h2 className="font-heading text-foreground uppercase tracking-widest text-base">Order Tracking</h2>
           <p>
             Once your order has been dispatched you will receive a confirmation email with a tracking
-            number. You can use this to monitor your delivery via the carrier's website. Please allow
+            number. You can use this to monitor your delivery via the courier website. Please allow
             up to 24 hours for tracking information to update after dispatch.
           </p>
         </section>

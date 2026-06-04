@@ -13,21 +13,21 @@ const rye = Rye({ subsets: ['latin'],
 
 export const metadata: Metadata = {
   title: {
-    default: 'My Store — Quality products, fast delivery',
-    template: '%s | My Store',
+    default: '16K — Quality products, fast delivery',
+    template: '%s | 16K ',
   },
-  description: 'Shop our curated collection of quality products. Free delivery over £50, 30-day returns.',
+  description: 'Shop our curated collection of quality products. Free delivery over $70, 30-day returns.',
   keywords: ['shop', 'online store', 'quality products', 'fast delivery'],
   openGraph: {
     type: 'website',
-    locale: 'en_GB',
-    siteName: 'My Store',
-    title: 'My Store — Quality products, fast delivery',
+    locale: 'en_CAN',
+    siteName: '16K',
+    title: '16K — Quality products, fast delivery',
     description: 'Shop our curated collection of quality products.',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'My Store',
+    title: '16K',
     description: 'Quality products, fast delivery',
   },
   robots: {

@@ -3,6 +3,9 @@ export const dynamic = 'force-dynamic'
 import { prisma } from '@/lib/prisma'
 import { formatPrice } from '@/lib/utils'
 import { OrderStatusSelect } from '@/components/admin/OrderStatusSelect'
+import Link from 'next/link'
+import { Eye } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 export default async function AdminOrdersPage() {
   const orders = await prisma.order.findMany({
@@ -54,6 +57,7 @@ export default async function AdminOrdersPage() {
                 <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden md:table-cell">
                   Date
                 </th>
+                <th className="px-4 py-3" />
               </tr>
             </thead>
             <tbody className="divide-y">
@@ -96,13 +100,16 @@ export default async function AdminOrdersPage() {
                     </td>
                     <td className="px-4 py-3 hidden md:table-cell text-muted-foreground text-xs">
                       {new Date(order.createdAt).toLocaleDateString(
-                        'en-GB',
-                        {
-                          day: 'numeric',
-                          month: 'short',
-                          year: 'numeric',
-                        }
+                        'en-CA',
+                        { day: 'numeric', month: 'short', year: 'numeric' }
                       )}
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <Link href={`/admin/orders/${order.id}`}>
+                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <Eye className="h-3.5 w-3.5" />
+                        </Button>
+                      </Link>
                     </td>
                   </tr>
                 )

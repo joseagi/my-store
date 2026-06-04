@@ -9,12 +9,51 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { formatPrice } from '@/lib/utils'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useMemo } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowLeft, Lock, AlertCircle } from 'lucide-react'
 import { toast } from '@/components/ui/use-toast'
 import { useMounted } from '@/hooks/useMounted'
+
+// ─── Email domain suggestion ─────────────────────────────────────────────────
+
+const KNOWN_DOMAINS = [
+  'gmail.com', 'googlemail.com', 'yahoo.com', 'yahoo.ca', 'yahoo.co.uk',
+  'hotmail.com', 'hotmail.ca', 'hotmail.co.uk', 'outlook.com', 'outlook.ca',
+  'live.com', 'live.ca', 'icloud.com', 'me.com', 'mac.com',
+  'protonmail.com', 'proton.me', 'aol.com', 'msn.com',
+  'mail.com', 'ymail.com', 'zoho.com', 'shaw.ca', 'rogers.com',
+  'bell.net', 'telus.net', 'sympatico.ca',
+]
+
+function levenshtein(a: string, b: string): number {
+  const m = a.length, n = b.length
+  const dp = Array.from({ length: m + 1 }, (_, i) =>
+    Array.from({ length: n + 1 }, (_, j) => (i === 0 ? j : j === 0 ? i : 0))
+  )
+  for (let i = 1; i <= m; i++)
+    for (let j = 1; j <= n; j++)
+      dp[i][j] = a[i - 1] === b[j - 1]
+        ? dp[i - 1][j - 1]
+        : 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1])
+  return dp[m][n]
+}
+
+function suggestDomain(email: string): string | null {
+  const at = email.lastIndexOf('@')
+  if (at === -1) return null
+  const domain = email.slice(at + 1).toLowerCase().trim()
+  if (!domain || !domain.includes('.')) return null
+  if (KNOWN_DOMAINS.includes(domain)) return null
+  let best: string | null = null
+  let bestDist = Infinity
+  for (const known of KNOWN_DOMAINS) {
+    const d = levenshtein(domain, known)
+    if (d < bestDist) { bestDist = d; best = known }
+  }
+  return bestDist <= 2 ? best : null
+}
 
 // ─── Country list ────────────────────────────────────────────────────────────
 
@@ -267,15 +306,19 @@ export function CheckoutForm() {
     register,
     handleSubmit,
     control,
+    setValue,
     formState: { errors },
   } = useForm<CheckoutFormData>({
     resolver: zodResolver(checkoutSchema),
     defaultValues: { country: 'CA', phone: '', termsAccepted: false },
   })
 
-  const selectedCountry = useWatch({ control, name: 'country' }) ?? 'GB'
+  const selectedCountry = useWatch({ control, name: 'country' }) ?? 'CA'
   const termsAccepted = useWatch({ control, name: 'termsAccepted' }) ?? false
+  const emailValue = useWatch({ control, name: 'email' }) ?? ''
   const config = getConfig(selectedCountry)
+
+  const domainSuggestion = useMemo(() => suggestDomain(emailValue), [emailValue])
 
   const onSubmit = async (data: CheckoutFormData) => {
     setIsSubmitting(true)
@@ -339,6 +382,21 @@ export function CheckoutForm() {
                     {...register('email')}
                     className={errors.email ? 'border-destructive' : ''}
                   />
+                  {domainSuggestion && !errors.email && (
+                    <div className="flex items-center justify-between gap-3 mt-1.5 text-xs bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-400 rounded-md px-3 py-2">
+                      <span className="flex items-center gap-1.5">
+                        <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+                        Did you mean <strong>{emailValue.slice(0, emailValue.lastIndexOf('@') + 1)}{domainSuggestion}</strong>?
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setValue('email', `${emailValue.slice(0, emailValue.lastIndexOf('@') + 1)}${domainSuggestion}`, { shouldValidate: true })}
+                        className="shrink-0 underline underline-offset-2 hover:no-underline font-medium"
+                      >
+                        Fix it
+                      </button>
+                    </div>
+                  )}
                 </Field>
 
                 <Field label="Phone number" id="phone" optional>
