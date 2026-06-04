@@ -41,10 +41,11 @@ export function ProductDetail({ product }: { product: Product }) {
     if (!canAdd) return
     addItem({
       id: product.id,
-      name: selectedSize ? `${product.name} — ${selectedSize}` : product.name,
+      name: product.name,
       price: product.price,
       image: product.images[0],
       slug: product.slug,
+      size: selectedSize ?? undefined,
     })
     setAdded(true)
     setTimeout(() => setAdded(false), 2000)

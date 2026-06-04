@@ -9,12 +9,14 @@ import { formatPrice } from '@/lib/utils'
 
 interface CartItemProps {
   item: {
+    cartKey: string
     id: string
     name: string
     price: number
     image: string
     slug: string
     quantity: number
+    size?: string
   }
 }
 
@@ -43,6 +45,7 @@ export function CartItem({ item }: CartItemProps) {
           </p>
         </Link>
         <p className="text-xs text-muted-foreground mt-0.5">
+          {item.size && <span className="mr-2">Size: {item.size}</span>}
           {formatPrice(item.price)} each
         </p>
 
@@ -51,7 +54,7 @@ export function CartItem({ item }: CartItemProps) {
             variant="outline"
             size="icon"
             className="h-7 w-7"
-            onClick={() => updateQuantity(item.id, item.quantity - 1)}
+            onClick={() => updateQuantity(item.cartKey, item.quantity - 1)}
           >
             <Minus className="h-3 w-3" />
           </Button>
@@ -62,7 +65,7 @@ export function CartItem({ item }: CartItemProps) {
             variant="outline"
             size="icon"
             className="h-7 w-7"
-            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+            onClick={() => updateQuantity(item.cartKey, item.quantity + 1)}
           >
             <Plus className="h-3 w-3" />
           </Button>
@@ -70,7 +73,7 @@ export function CartItem({ item }: CartItemProps) {
             variant="ghost"
             size="icon"
             className="h-7 w-7 text-muted-foreground hover:text-destructive ml-auto"
-            onClick={() => removeItem(item.id)}
+            onClick={() => removeItem(item.cartKey)}
           >
             <Trash2 className="h-3 w-3" />
           </Button>

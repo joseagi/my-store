@@ -34,9 +34,10 @@ export function ProductForm({ initialData, mode }: ProductFormProps) {
   const [images, setImages] = useState<string[]>(
     initialData?.images ?? []
   )
-  const [sizesInput, setSizesInput] = useState(
-    (initialData?.sizes ?? []).join(', ')
+  const [sizes, setSizes] = useState<string[]>(
+    initialData?.sizes ?? []
   )
+  const [sizeInput, setSizeInput] = useState('')
   const [uploading, setUploading] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const router = useRouter()
@@ -49,7 +50,7 @@ export function ProductForm({ initialData, mode }: ProductFormProps) {
     formState: { errors },
   } = useForm<ProductFormData>({
     resolver: zodResolver(productFormSchema),
-    defaultValues: initialData ?? {},
+    defaultValues: initialData,
   })
 
   const nameValue = useWatch({ control, name: 'name' }) ?? ''
@@ -137,11 +138,7 @@ export function ProductForm({ initialData, mode }: ProductFormProps) {
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...data,
-          images,
-          sizes: sizesInput.split(',').map(s => s.trim()).filter(Boolean),
-        }),
+        body: JSON.stringify({ ...data, images, sizes }),
       })
 
       const result = await res.json()
@@ -168,7 +165,7 @@ export function ProductForm({ initialData, mode }: ProductFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-2xl">
+    <form onSubmit={(e) => { void handleSubmit(onSubmit)(e) }} className="space-y-6 max-w-2xl">
 
       {/* Image upload */}
       <div className="space-y-3">
@@ -321,21 +318,64 @@ export function ProductForm({ initialData, mode }: ProductFormProps) {
         </div>
       </div>
 
-      {/* Sizes */}
-      <div className="space-y-1.5">
-        <Label htmlFor="sizes">
-          Sizes
-          <span className="text-muted-foreground font-normal ml-1 text-xs">
-            (comma-separated, e.g. 28, 30, 32 or S, M, L)
-          </span>
-        </Label>
-        <Input
-          id="sizes"
-          placeholder="28, 30, 32, 34, 36"
-          value={sizesInput}
-          onChange={e => setSizesInput(e.target.value)}
-        />
-      </div>
+{/* Sizes */}
+<div className="space-y-1.5">
+  <Label>Sizes</Label>
+
+  {/* Tag-style display of added sizes */}
+  <div className="flex flex-wrap gap-2 mb-2">
+    {sizes.map(size => (
+      <span
+        key={size}
+        className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-secondary text-secondary-foreground text-sm font-medium"
+      >
+        {size}
+        <button
+          type="button"
+          onClick={() => setSizes(prev => prev.filter(s => s !== size))}
+          className="hover:text-destructive transition-colors"
+        >
+          <X className="h-3 w-3" />
+        </button>
+      </span>
+    ))}
+  </div>
+
+  {/* Input to add a new size */}
+  <div className="flex gap-2">
+    <Input
+      value={sizeInput}
+      onChange={e => setSizeInput(e.target.value.toUpperCase())}
+      onKeyDown={e => {
+        if (e.key === 'Enter' || e.key === ',') {
+          e.preventDefault()
+          const trimmed = sizeInput.trim()
+          if (trimmed && !sizes.includes(trimmed)) {
+            setSizes(prev => [...prev, trimmed])
+          }
+          setSizeInput('')
+        }
+      }}
+      placeholder="Type a size and press Enter (e.g. S, M, L, XL)"
+    />
+    <Button
+      type="button"
+      variant="outline"
+      onClick={() => {
+        const trimmed = sizeInput.trim()
+        if (trimmed && !sizes.includes(trimmed)) {
+          setSizes(prev => [...prev, trimmed])
+        }
+        setSizeInput('')
+      }}
+    >
+      Add
+    </Button>
+  </div>
+  <p className="text-xs text-muted-foreground">
+    Press Enter or click Add. Duplicates are ignored.
+  </p>
+</div>
 
       {/* Category */}
       <div className="space-y-1.5">

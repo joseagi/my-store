@@ -2,19 +2,21 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 interface CartItem {
+  cartKey: string
   id: string
   name: string
   price: number
   image: string
   quantity: number
   slug: string
+  size?: string
 }
 
 interface CartStore {
   items: CartItem[]
-  addItem: (item: Omit<CartItem, 'quantity'>) => void
-  removeItem: (id: string) => void
-  updateQuantity: (id: string, quantity: number) => void
+  addItem: (item: Omit<CartItem, 'quantity' | 'cartKey'>) => void
+  removeItem: (cartKey: string) => void
+  updateQuantity: (cartKey: string, quantity: number) => void
   clearCart: () => void
   total: () => number
   itemCount: () => number
@@ -26,35 +28,36 @@ export const useCartStore = create<CartStore>()(
       items: [],
 
       addItem: (item) => {
-        const existing = get().items.find(i => i.id === item.id)
+        const cartKey = `${item.id}-${item.size ?? ''}`
+        const existing = get().items.find(i => i.cartKey === cartKey)
         if (existing) {
           set(state => ({
             items: state.items.map(i =>
-              i.id === item.id
+              i.cartKey === cartKey
                 ? { ...i, quantity: i.quantity + 1 }
                 : i
             ),
           }))
         } else {
           set(state => ({
-            items: [...state.items, { ...item, quantity: 1 }],
+            items: [...state.items, { ...item, cartKey, quantity: 1 }],
           }))
         }
       },
 
-      removeItem: (id) =>
+      removeItem: (cartKey) =>
         set(state => ({
-          items: state.items.filter(i => i.id !== id),
+          items: state.items.filter(i => i.cartKey !== cartKey),
         })),
 
-      updateQuantity: (id, quantity) => {
+      updateQuantity: (cartKey, quantity) => {
         if (quantity <= 0) {
-          get().removeItem(id)
+          get().removeItem(cartKey)
           return
         }
         set(state => ({
           items: state.items.map(i =>
-            i.id === id ? { ...i, quantity } : i
+            i.cartKey === cartKey ? { ...i, quantity } : i
           ),
         }))
       },

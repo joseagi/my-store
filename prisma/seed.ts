@@ -84,7 +84,7 @@ const products = [
   {
     name: 'White Tee',
     slug: 'white-tee',
-    Sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     description: '38mm brushed steel case, sapphire crystal glass, genuine leather strap.',
     price: 199.99,
     stock: 30,
