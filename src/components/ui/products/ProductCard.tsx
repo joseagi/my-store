@@ -1,13 +1,7 @@
-'use client'
-
 import Image from 'next/image'
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { useCartStore } from '@/store/cart'
 import { formatPrice } from '@/lib/utils'
-import { useState } from 'react'
-import { Check, ShoppingCart } from 'lucide-react'
 
 interface Product {
   id: string
@@ -26,23 +20,6 @@ export function ProductCard({
   product: Product
   index?: number
 }) {
-  const [added, setAdded] = useState(false)
-  const addItem = useCartStore(state => state.addItem)
-
-  function handleAdd(e: React.MouseEvent) {
-    e.preventDefault()
-    e.stopPropagation()
-    addItem({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      image: product.images[0],
-      slug: product.slug,
-    })
-    setAdded(true)
-    setTimeout(() => setAdded(false), 2000)
-  }
-
   return (
     <Link
       href={`/products/${product.slug}`}
@@ -78,31 +55,9 @@ export function ProductCard({
         <h3 className="font-heading font-medium text-sm leading-tight group-hover:text-primary transition-colors line-clamp-2">
           {product.name}
         </h3>
-        <div className="flex items-center justify-between mt-3 gap-2">
-          <span className="text-base font-semibold">
-            {formatPrice(product.price)}
-          </span>
-          <Button
-            size="sm"
-            onClick={handleAdd}
-            disabled={product.stock === 0 || added}
-            className="gap-1 text-xs px-2 shrink-0 relative z-10"
-          >
-            {added ? (
-              <>
-                <Check className="h-3 w-3" />
-                <span className="hidden sm:inline">Added</span>
-                <span className="sm:hidden">✓</span>
-              </>
-            ) : (
-              <>
-                <ShoppingCart className="h-3 w-3" />
-                <span className="hidden sm:inline">Add</span>
-                <span className="sm:hidden">+</span>
-              </>
-            )}
-          </Button>
-        </div>
+        <p className="text-base font-semibold mt-3">
+          {formatPrice(product.price)}
+        </p>
       </div>
     </Link>
   )
