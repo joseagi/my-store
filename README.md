@@ -31,14 +31,18 @@ A production-ready e-commerce web application built with Next.js 15, Prisma 7, S
 
 ### Customer Features
 - Browse products with category filtering
+- Product cards are fully clickable — no "Add to cart" on listing pages; customers click through to select size first
 - Product detail pages with image gallery (arrow navigation + thumbnails)
-- Size selection required before adding to cart — "Select size" prompt enforced
+- Size selection required before adding to cart — button reads "Select size" until a size is chosen
 - Size guide modal with measurement diagram on each product page
 - Shipping policy page linked from every product detail page
-- Cart supports the same product in multiple sizes as separate line items
-- Shopping cart with quantity controls (persists across sessions)
-- Full cart page (`/cart`) with order summary, shipping threshold, and checkout
+- Cart supports the same product in multiple sizes as separate line items (each size = its own cart row)
+- Shopping cart with quantity controls (persists across sessions via localStorage)
+- Full cart page (`/cart`) with order summary, free shipping threshold (CA$75), and checkout
 - Guest and authenticated checkout
+- Checkout form: country/region selector first; fields (postcode label, state/province dropdown) update dynamically based on selected country — covers 30 countries, with dropdowns for US states, Canadian provinces, and Australian territories
+- Email domain validation at checkout — catches common typos (`.con`, `.cmo`, etc.) before submission
+- Terms & Conditions agreement checkbox — must be accepted before proceeding to payment
 - Stripe-powered secure payments
 - Order confirmation with full details
 - Order history for signed-in users
@@ -48,9 +52,16 @@ A production-ready e-commerce web application built with Next.js 15, Prisma 7, S
 - Protected admin panel (`/admin`)
 - Revenue, orders, products, and customer stats dashboard
 - Full product CRUD with image upload to Supabase Storage
-- Size management per product — tag-style input (type and press Enter to add, click × to remove)
+- Size management per product — tag-style input: type a size and press Enter to add, click × to remove
+- Order detail page shows each item's selected size alongside quantity and price
 - Low stock alerts
 - Order management with inline status updates
+
+### Localisation
+- Currency: Canadian Dollars (CAD) — all prices displayed with `en-CA` locale formatting
+- Free shipping threshold: CA$75 (flat rate CA$8.99 below)
+- Default checkout country: Canada
+- Terms & Conditions and Shipping Policy reflect Canadian law (Ontario jurisdiction, PIPEDA privacy, HST/GST)
 
 ### Technical Features
 - Server-side rendering for SEO
@@ -250,6 +261,17 @@ model Order {
   address   Json?
   items     OrderItem[]
   createdAt DateTime    @default(now())
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  productId String
+  quantity  Int
+  price     Float
+  size      String?   # selected size variant (e.g. "M", "32", "One Size")
+  order     Order   @relation(fields: [orderId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
 }
 
 enum OrderStatus {
@@ -532,7 +554,51 @@ Features planned for future iterations:
 
 ---
 
-- [Next.js](https://nextjs.org) — React framework
+### 2026-06-05 — 2026-06-06
+
+**Canadian localisation**
+- `formatPrice` in `src/lib/utils.ts` updated to use `currency: 'CAD'` and `locale: 'en-CA'` — all prices now display as `CA$` throughout the site
+- Free shipping threshold raised from £50 → CA$75; flat rate from £4.99 → CA$8.99; updated in cart drawer, cart page, checkout form, and checkout API route
+- Default checkout country changed from `GB` → `CA`
+- Terms & Conditions and Shipping Policy pages updated to reference Ontario, Canada jurisdiction, PIPEDA privacy legislation, and HST/GST instead of UK VAT
+
+**Checkout form overhaul** (`src/components/checkout/CheckoutForm.tsx` + `src/lib/schemas.ts`)
+- **Country first:** the Country / Region dropdown is now the very first field in the Shipping Address section
+- **30 countries** with flag emojis; ordered with anglophone and African countries at the top
+- **Dynamic regional fields:** field labels and placeholders update when the country changes:
+  - Postcode (UK/AU) → ZIP code (US) → Eircode (IE) → Postal code (CA)
+  - County (UK/IE) → State dropdown (US, 50 states + DC) → Province dropdown (CA, 13) → State/Territory dropdown (AU, 8) → free-text for all others
+  - Phone placeholder updates to the country's dialling format
+- **Apartment / suite** optional field added between street address and city
+- **Email domain validation:** Zod `.refine()` checks the TLD is 2–6 alphabetic characters and rejects known typos (`.con`, `.cmo`, `.ocm`, `.vom`, etc.) with the message *"Check your email — the domain looks incorrect (e.g. did you mean .com?)"*
+- **Terms & Conditions checkbox:** must be checked before "Continue to payment" is enabled; unchecking immediately re-disables the button; inline error shown if bypassed
+- Order summary in checkout now uses `item.cartKey` as the React key and shows selected size beneath each product name
+
+**Terms & Conditions page** (`src/app/terms/page.tsx`)
+- New page at `/terms` covering 14 sections: eligibility, pricing (CAD, HST/GST), orders, shipping, returns (30-day), sizing, IP, PIPEDA privacy, liability, governing law (Ontario)
+- Linked from the terms checkbox on the checkout form
+
+**Shipping policy updated** (`src/app/shipping/page.tsx`)
+- Replaced UK delivery table with Canadian domestic rates (Standard 5–7 days CA$8.99, Expedited 2–3 days CA$14.99, free over CA$75)
+- Added USA shipping section (5–10 business days) and updated international section
+
+**Order size tracking**
+- Added `size String?` to `OrderItem` in `prisma/schema.prisma`
+- Ran `prisma generate` to update the Prisma client types
+- Updated `checkoutBodySchema` in the checkout API to accept `size` and `cartKey` on each item
+- Updated `OrderItem` create call to persist `size` to the database
+- Order detail page (`src/app/admin/orders/[id]/page.tsx`) now shows the selected size as a pill badge beside each product name in both the item list and order summary
+- **Apply this migration manually in Supabase SQL Editor:**
+  ```sql
+  ALTER TABLE "OrderItem" ADD COLUMN IF NOT EXISTS "size" TEXT;
+  ```
+
+**Admin product form** (`src/components/admin/ProductForm.tsx`)
+- Final TypeScript fix: `sizes` removed from Zod schema (`.default([])` caused resolver type conflict); managed via `useState` and passed manually in the submit body alongside `data`
+
+---
+
+## Built With
 - [Tailwind CSS](https://tailwindcss.com) — Utility-first CSS
 - [shadcn/ui](https://ui.shadcn.com) — Component library
 - [Prisma](https://prisma.io) — Database ORM
