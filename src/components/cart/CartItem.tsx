@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { Minus, Plus, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useCartStore } from '@/store/cart'
-import { formatPrice } from '@/lib/utils'
+import { useLocale } from '@/store/locale'
 
 interface CartItemProps {
   item: {
@@ -22,6 +22,7 @@ interface CartItemProps {
 
 export function CartItem({ item }: CartItemProps) {
   const { updateQuantity, removeItem } = useCartStore()
+  const { formatPrice } = useLocale()
 
   return (
     <div className="flex gap-3">

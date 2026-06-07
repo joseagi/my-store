@@ -11,10 +11,11 @@ import { Badge } from '@/components/ui/badge'
 import { ShoppingCart, ArrowRight } from 'lucide-react'
 import { useCartStore } from '@/store/cart'
 import { CartItem } from './CartItem'
-import { formatPrice } from '@/lib/utils'
+import { useLocale } from '@/store/locale'
 
 export function CartDrawer() {
   const { items, total, itemCount } = useCartStore()
+  const { t, formatPrice } = useLocale()
   const count = itemCount()
   const orderTotal = total()
   const shippingCost = orderTotal >= 75 ? 0 : 8.99
@@ -40,7 +41,7 @@ export function CartDrawer() {
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2">
             <ShoppingCart className="h-5 w-5" />
-            Your Cart
+            {t('yourCart')}
             {mounted && count > 0 && (
               <span className="text-sm font-normal text-muted-foreground">
                 ({count} {count === 1 ? 'item' : 'items'})
@@ -55,9 +56,9 @@ export function CartDrawer() {
               <ShoppingCart className="h-10 w-10 text-muted-foreground" />
             </div>
             <div>
-              <p className="font-medium">Your cart is empty</p>
+              <p className="font-medium">{t('cartEmpty')}</p>
               <p className="text-sm text-muted-foreground mt-1">
-                Add some products to get started
+                {t('startShopping')}
               </p>
             </div>
             <SheetTrigger asChild>
@@ -77,20 +78,20 @@ export function CartDrawer() {
             <div className="border-t pt-4 space-y-4">
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between text-muted-foreground">
-                  <span>Subtotal</span>
+                  <span>{t('subtotal')}</span>
                   <span>{formatPrice(orderTotal)}</span>
                 </div>
                 <div className="flex justify-between text-muted-foreground">
-                  <span>Shipping</span>
+                  <span>{t('shipping')}</span>
                   <span>
                     {shippingCost === 0
-                      ? <span className="text-green-600 font-medium">Free</span>
+                      ? <span className="text-green-600 font-medium">{t('free')}</span>
                       : formatPrice(shippingCost)
                     }
                   </span>
                 </div>
                 <div className="flex justify-between font-semibold text-base border-t pt-2">
-                  <span>Total</span>
+                  <span>{t('total')}</span>
                   <span>{formatPrice(grandTotal)}</span>
                 </div>
               </div>
@@ -104,7 +105,7 @@ export function CartDrawer() {
               <SheetTrigger asChild>
                 <Link href="/checkout" className="block">
                   <Button className="w-full gap-2" size="lg">
-                    Checkout
+                    {t('checkout')}
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </Link>
@@ -113,7 +114,7 @@ export function CartDrawer() {
               <SheetTrigger asChild>
                 <Link href="/cart" className="block">
                   <Button variant="ghost" className="w-full text-sm" size="sm">
-                    View full cart
+                    {t('viewFullCart')}
                   </Button>
                 </Link>
               </SheetTrigger>

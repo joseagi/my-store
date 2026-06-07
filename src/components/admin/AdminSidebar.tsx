@@ -6,6 +6,8 @@ import {
   LayoutDashboard,
   Package,
   ShoppingBag,
+  Images,
+  BookImage,
   ArrowLeft,
   Store,
   Menu,
@@ -35,6 +37,18 @@ const navItems = [
     href: '/admin/orders',
     label: 'Orders',
     icon: ShoppingBag,
+    exact: false,
+  },
+  {
+    href: '/admin/carousel',
+    label: 'Carousel',
+    icon: Images,
+    exact: false,
+  },
+  {
+    href: '/admin/lookbook',
+    label: 'Lookbook',
+    icon: BookImage,
     exact: false,
   },
 ]

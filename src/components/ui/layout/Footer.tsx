@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { Store } from 'lucide-react'
+import { FooterLocale } from './FooterLocale'
 
 export function Footer() {
   return (
@@ -27,6 +28,7 @@ export function Footer() {
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><Link href="/faq" className="hover:text-primary">FAQ</Link></li>
               <li><Link href="/contact" className="hover:text-primary">Contact</Link></li>
+              <li><Link href="/shipping" className="hover:text-primary">Shipping Policy</Link></li>
             </ul>
           </div>
           <div>
@@ -37,7 +39,9 @@ export function Footer() {
             </ul>
           </div>
         </div>
-        <div className="border-t mt-8 pt-6 text-center text-sm text-muted-foreground">
+        <FooterLocale />
+
+        <div className="border-t mt-6 pt-6 text-center text-sm text-muted-foreground">
           © {new Date().getFullYear()} My Store. All rights reserved.
         </div>
       </div>

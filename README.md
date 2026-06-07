@@ -598,6 +598,96 @@ Features planned for future iterations:
 
 ---
 
+### 2026-06-06
+
+**Navbar — full redesign** (`src/components/ui/layout/Navbar.tsx`)
+- Replaced the original right-aligned layout with: hamburger (left) | logo (centred) | search + cart + auth (right)
+- Hamburger opens a full-screen overlay with two levels:
+  - **Main menu:** Shop →, Lookbook, My Orders, Contact, FAQ, Admin (admin-only), Sign in / Sign out
+  - **Shop submenu:** ← back button, then All + each category pulled live from `/api/categories`
+- Categories API route created at `src/app/api/categories/route.ts` — returns distinct product categories from the database
+- Search bar slides in below the header when the search icon is clicked; pressing Enter navigates to `/?search=...`
+- Body scroll is locked when the menu overlay is open
+- Menu order (final): Shop, Lookbook, My Orders, Contact, FAQ, Admin, Sign in / Sign out
+
+**Hero carousel** (`src/components/ui/HeroCarousel.tsx`)
+- New full-viewport rotating image carousel replaces the static hero section
+- Images crossfade every 5 seconds, pause on hover, with dot indicators
+- Centred "SHOP" button (white on dark overlay) links to the products section
+- Falls back to product images if no carousel images are configured
+
+**Carousel image management**
+- New `CarouselImage` Prisma model (`id`, `url`, `createdAt`) — stores carousel image URLs in the database
+- Admin page at `src/app/admin/carousel/page.tsx` — paste a Supabase (or any public) image URL to add it to the carousel; images appear in the order they were added; delete on hover
+- API route at `src/app/api/admin/carousel/route.ts` — GET / POST / DELETE
+- Homepage (`src/app/page.tsx`) fetches carousel URLs from the `CarouselImage` table; falls back to product images if the table is empty
+- **Run in Supabase SQL Editor to create the table:**
+  ```sql
+  CREATE TABLE "CarouselImage" (
+    "id" TEXT NOT NULL,
+    "url" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "CarouselImage_pkey" PRIMARY KEY ("id")
+  );
+  ```
+
+**Lookbook**
+- `LookbookImage` Prisma model added (`id`, `url`, `caption`, `createdAt`)
+- Admin page at `src/app/admin/lookbook/page.tsx` rewritten — paste any public image URL (with optional caption); images appear in the public lookbook page; delete by clicking the trash icon
+- Public lookbook page (`src/app/lookbook/page.tsx`) converted from client component to server component — reads directly from the `LookbookImage` database table; displays in a masonry grid; captions slide up on hover
+- API route at `src/app/api/lookbook/route.ts` — GET / POST / DELETE (POST and DELETE are admin-only)
+- **Run in Supabase SQL Editor to create the table:**
+  ```sql
+  CREATE TABLE "LookbookImage" (
+    "id" TEXT NOT NULL,
+    "url" TEXT NOT NULL,
+    "caption" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "LookbookImage_pkey" PRIMARY KEY ("id")
+  );
+  ```
+
+**Locale context — currency conversion + language** (`src/store/locale.tsx`)
+- `LocaleProvider` wraps the entire app (added to `src/app/layout.tsx`)
+- **Currency:** auto-detects visitor country via `ipapi.co` and sets the matching currency (e.g. Nigeria → NGN ₦, UK → GBP); preference saved to localStorage; exchange rates fetched from `open.er-api.com/v6/latest/CAD`; `formatPrice(cadPrice)` converts and formats in the selected currency
+- **Language:** 12 languages supported (English, French, Spanish, German, Portuguese, Italian, Dutch, Japanese, Chinese, Korean, Arabic, Hindi); full UI translation strings for all key labels, buttons, and nav items; preference saved to localStorage
+- `FooterLocale` component updated to read from and write to the locale context; currency/language dropdowns now have explicit white background and black text so they are readable in all themes
+- 15 currencies available in the selector with country/currency auto-detection
+
+**FAQ page** (`src/app/faq/page.tsx`)
+- 12 accordion-style questions covering sizing, shipping, returns, payments, tracking, currency, and damaged items
+- Native `<details>`/`<summary>` accordion — no JS library needed; + icon rotates to × when open
+- Links to `/contact` at top and bottom
+
+**Contact page** (`src/app/contact/page.tsx`)
+- Form with name, email, subject, and message fields
+- On submit: opens the user's mail client pre-filled with `support@mystore.com` as recipient
+- Shows a success state with fallback direct email link
+- Hours and response time displayed below the form
+
+**Admin sidebar** (`src/components/admin/AdminSidebar.tsx`)
+- Added **Carousel** (Images icon) and **Lookbook** (BookImage icon) navigation links below Orders
+- Both items highlight as active when navigating to their respective admin pages
+
+---
+
+### 2026-06-07
+
+**Carousel — database-backed image management**
+- Resolved persistent Supabase Storage listing issues (RLS policies blocking anon `list()` calls, double URL-encoding bug from `encodeURIComponent` applied to an already-encoded bucket name)
+- Final architecture: carousel image URLs are stored in the `CarouselImage` database table; the homepage reads from the table with a simple `prisma.carouselImage.findMany()` — no bucket listing, no RLS dependency
+- Admin UI at `/admin/carousel` allows pasting any public image URL (Supabase or otherwise) to add it to the rotation
+
+**Admin lookbook page rewrite**
+- Replaced the file-upload-based admin lookbook with the same URL-paste approach as the carousel
+- Supports an optional caption field; captions are shown on the public lookbook page on image hover
+- Uses the existing `/api/lookbook` endpoints (GET / POST / DELETE)
+
+**Hamburger menu — final item order**
+- Reordered to: Shop, Lookbook, My Orders, Contact, FAQ, Admin (admin-only), Sign in / Sign out
+
+---
+
 ## Built With
 - [Tailwind CSS](https://tailwindcss.com) — Utility-first CSS
 - [shadcn/ui](https://ui.shadcn.com) — Component library

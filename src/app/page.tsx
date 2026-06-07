@@ -3,9 +3,13 @@ export const dynamic = 'force-dynamic'
 import { prisma } from '@/lib/prisma'
 import { ProductGrid } from '@/components/ui/products/ProductGrid'
 import { CategoryTabs } from '@/components/ui/products/CategoryTabs'
-import { Button } from '@/components/ui/button'
-import Image from 'next/image'
+import { HeroCarousel } from '@/components/ui/HeroCarousel'
 import { Suspense } from 'react'
+
+async function getCarouselImages(): Promise<string[]> {
+  const rows = await prisma.carouselImage.findMany({ orderBy: { createdAt: 'asc' } })
+  return rows.map(r => r.url)
+}
 
 async function getProducts(category?: string) {
   return prisma.product.findMany({
@@ -32,63 +36,35 @@ async function getCategories() {
 }
 
 interface Props {
-  // SearchParams is now a promise in Next.js 15
   searchParams: Promise<{ category?: string }>
 }
+
 export default async function HomePage({ searchParams }: Props) {
-  // ✅ Await it before using
   const { category } = await searchParams
 
-  const [products, categories] = await Promise.all([
+  const [products, categories, carouselImages] = await Promise.all([
     getProducts(category),
     getCategories(),
+    getCarouselImages(),
   ])
 
-  const heroProduct = products[0]
+  // Use Carousel Pictures bucket; fall back to product images if bucket is empty
+  const heroImages = carouselImages.length > 0
+    ? carouselImages
+    : products.filter(p => p.images.length > 0).slice(0, 5).map(p => p.images[0])
 
   return (
     <div>
-      {/* Hero */}
-      <section className="bg-muted/40 border-b">
-        <div className="container mx-auto px-4 py-12 md:py-20 flex flex-col md:flex-row items-center gap-8">
-          <div className="flex-1 space-y-4 text-center md:text-left">
-            <h1 className="font-heading text-4xl md:text-5xl font-bold leading-tight">
-              Quality that<br />speaks for itself
-            </h1>
-            <p className="text-muted-foreground text-lg max-w-md mx-auto md:mx-0">
-              Carefully selected products built to last.
-              Free delivery on orders over $75.
-            </p>
-            <div className="flex gap-3 justify-center md:justify-start">
-              <a href="#products">
-                <Button size="lg">Shop now</Button>
-              </a>
-            </div>
-          </div>
-
-          {heroProduct && (
-            <div className="flex-1 relative aspect-square w-full max-w-sm rounded-2xl overflow-hidden">
-              <Image
-                src={heroProduct.images[0]}
-                alt={heroProduct.name}
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover"
-                priority
-              />
-            </div>
-          )}
-        </div>
-      </section>
+      <HeroCarousel images={heroImages} />
 
       {/* Trust bar */}
       <section className="border-b bg-background">
         <div className="container mx-auto px-4 py-3">
           <div className="flex flex-wrap justify-center gap-4 md:gap-10 text-xs text-muted-foreground">
-            <span>✓ Free delivery over $75</span>
+            <span>✓ Free delivery over CA$75</span>
             <span>✓ 30-day returns</span>
             <span>✓ Secure checkout</span>
-            <span>✓ CAN-based support</span>
+            <span>✓ Canada-based support</span>
           </div>
         </div>
       </section>

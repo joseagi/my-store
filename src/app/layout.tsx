@@ -5,6 +5,7 @@ import { Navbar } from '@/components/ui/layout/Navbar'
 import { Footer } from '@/components/ui/layout/Footer'
 import { Toaster } from '@/components/ui/sonner'
 import { SessionProvider } from '@/components/providers/SessionProvider'
+import { LocaleProvider } from '@/store/locale'
 
 const rye = Rye({ subsets: ['latin'],
   weight: '400',
@@ -42,12 +43,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className={rye.variable}>
         <SessionProvider>
-        <div className="flex min-h-screen flex-col">
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
-        </div>
-        <Toaster />
+          <LocaleProvider>
+            <div className="flex min-h-screen flex-col">
+              <Navbar />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </div>
+            <Toaster />
+          </LocaleProvider>
         </SessionProvider>
       </body>
     </html>

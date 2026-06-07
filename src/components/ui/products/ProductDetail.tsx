@@ -5,7 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ChevronLeft, ChevronRight, X } from 'lucide-react'
 import { useCartStore } from '@/store/cart'
-import { formatPrice } from '@/lib/utils'
+import { useLocale } from '@/store/locale'
 
 interface Product {
   id: string
@@ -25,6 +25,7 @@ export function ProductDetail({ product }: { product: Product }) {
   const [added, setAdded] = useState(false)
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false)
   const addItem = useCartStore(state => state.addItem)
+  const { t, formatPrice } = useLocale()
 
   const isOutOfStock = product.stock === 0
   const hasSizes = (product.sizes ?? []).length > 0
@@ -59,7 +60,7 @@ export function ProductDetail({ product }: { product: Product }) {
         href="/"
         className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-8 transition-colors font-heading uppercase tracking-widest"
       >
-        ← Back
+        {t('back')}
       </Link>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16">
@@ -160,7 +161,7 @@ export function ProductDetail({ product }: { product: Product }) {
               disabled
               className="w-full py-3 border border-border text-muted-foreground font-heading uppercase tracking-widest text-sm cursor-not-allowed"
             >
-              Out of stock
+              {t('outOfStock')}
             </button>
           ) : (
             <button
@@ -175,10 +176,10 @@ export function ProductDetail({ product }: { product: Product }) {
               }`}
             >
               {added
-                ? '✓ Added to cart'
+                ? t('addedToCart')
                 : hasSizes && !selectedSize
-                ? 'Select size'
-                : 'Add to cart'}
+                ? t('selectSize')
+                : t('addToCart')}
             </button>
           )}
 
@@ -198,13 +199,13 @@ export function ProductDetail({ product }: { product: Product }) {
               onClick={() => setSizeGuideOpen(true)}
               className="block text-sm underline underline-offset-4 hover:text-primary transition-colors font-heading uppercase tracking-widest"
             >
-              · Size guide
+              · {t('sizeGuide')}
             </button>
             <Link
               href="/shipping"
               className="block text-sm underline underline-offset-4 hover:text-primary transition-colors font-heading uppercase tracking-widest"
             >
-              · Shipping policy
+              · {t('shippingPolicy')}
             </Link>
           </div>
         </div>
@@ -245,7 +246,7 @@ export function ProductDetail({ product }: { product: Product }) {
               </svg>
             </div>
 
-            <p className="text-center text-xs uppercase tracking-widest font-heading mb-4">Size Guide</p>
+            <p className="text-center text-xs uppercase tracking-widest font-heading mb-4">{t('sizeGuide')}</p>
 
             <div className="overflow-x-auto">
               <table className="w-full text-xs border-collapse font-heading">

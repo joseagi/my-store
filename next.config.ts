@@ -16,6 +16,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'mrdqsyihkarznjjpoyif.supabase.co', 
       },
+      {
+        protocol: 'https',
+        hostname: 'images.remotePatterns', 
+      },
     ],
   },
 }
