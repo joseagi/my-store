@@ -58,7 +58,8 @@ A production-ready e-commerce web application built with Next.js 15, Prisma 7, S
 - Order management with inline status updates
 
 ### Localisation
-- Currency: Canadian Dollars (CAD) — all prices displayed with `en-CA` locale formatting
+- **Multi-currency:** auto-detects visitor country via `ipapi.co` and sets the matching currency (e.g. Nigeria → NGN, UK → GBP, US → USD); 15 currencies selectable in the footer; exchange rates fetched live from `open.er-api.com`; preference saved to localStorage
+- **12 languages:** English, French, Spanish, German, Portuguese, Italian, Dutch, Japanese, Chinese, Korean, Arabic, Hindi; all nav, cart, product card, trust bar, and footer labels are translated; preference saved to localStorage
 - Free shipping threshold: CA$75 (flat rate CA$8.99 below)
 - Default checkout country: Canada
 - Terms & Conditions and Shipping Policy reflect Canadian law (Ontario jurisdiction, PIPEDA privacy, HST/GST)
@@ -477,7 +478,7 @@ Features planned for future iterations:
 - [x] Multiple product variants (size selection) — completed 2026-06-03
 - [ ] Inventory alerts via email
 - [ ] Analytics dashboard with charts
-- [ ] Multi-currency support
+- [x] Multi-currency support — completed 2026-06-07
 - [ ] Custom domain connection
 
 ---
@@ -685,6 +686,19 @@ Features planned for future iterations:
 
 **Hamburger menu — final item order**
 - Reordered to: Shop, Lookbook, My Orders, Contact, FAQ, Admin (admin-only), Sign in / Sign out
+
+**Brand rename — "My Store" → "16K"**
+- Navbar centre logo changed from "My Store" to "16K" with the animated pearl/marble gradient effect (`.logo-pearl` CSS class defined in `globals.css` — `135deg` gradient across cool white, lavender, aqua, warm gold, and rose pearl; 6 s `background-position` keyframe animation)
+- Footer brand block removed entirely: "My Store" heading and "Quality products, delivered fast" tagline are gone
+- Footer layout reduced from a 4-column grid to a 3-column grid (Shop / Support / Legal)
+- Roadmap item `Multi-currency support` updated: already shipped
+
+**Locale applied site-wide** (`src/store/locale.tsx` context consumed across the UI)
+- **ProductCard** (`src/components/ui/products/ProductCard.tsx`) converted to `'use client'`; price now formatted via `useLocale().formatPrice(cadPrice)` so it converts and displays in the visitor's active currency; "Sold out" badge uses `t('outOfStock')` and is translated across all 12 supported languages
+- **Footer** (`src/components/ui/layout/Footer.tsx`) converted to `'use client'`; all section headings (Shop, Support, Legal), link labels (All Products, Cart, FAQ, Contact, Shipping Policy, Privacy Policy, Terms), and the copyright line now use `t()` for full translation
+- **Navbar / Hamburger menu** (`src/components/ui/layout/Navbar.tsx`) — `MainMenu`, `ShopMenu`, and `AuthButton` each call `useLocale()` and use `t()` for every visible label: Shop, Lookbook, My Orders, Contact, FAQ, Admin, Sign in, Sign out, All (shop submenu back-label), and the search placeholder
+- **Trust bar** extracted from `src/app/page.tsx` into a new client component `src/components/ui/TrustBar.tsx`; all four messages (free delivery, returns, secure checkout, Canada-based support) now use `t()` so they translate when the visitor switches language
+- **Footer "All Products" link** updated from `href="/"` to `href="/#products"` — anchors directly to the product grid section on the homepage
 
 ---
 

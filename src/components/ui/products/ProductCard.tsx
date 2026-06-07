@@ -1,7 +1,9 @@
+'use client'
+
 import Image from 'next/image'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
-import { formatPrice } from '@/lib/utils'
+import { useLocale } from '@/store/locale'
 
 interface Product {
   id: string
@@ -20,6 +22,8 @@ export function ProductCard({
   product: Product
   index?: number
 }) {
+  const { formatPrice, t } = useLocale()
+
   return (
     <Link
       href={`/products/${product.slug}`}
@@ -41,7 +45,7 @@ export function ProductCard({
         )}
         {product.stock === 0 && (
           <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-            <Badge variant="secondary">Sold out</Badge>
+            <Badge variant="secondary">{t('outOfStock')}</Badge>
           </div>
         )}
       </div>

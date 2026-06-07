@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { ProductGrid } from '@/components/ui/products/ProductGrid'
 import { CategoryTabs } from '@/components/ui/products/CategoryTabs'
 import { HeroCarousel } from '@/components/ui/HeroCarousel'
+import { TrustBar } from '@/components/ui/TrustBar'
 import { Suspense } from 'react'
 
 async function getCarouselImages(): Promise<string[]> {
@@ -57,17 +58,7 @@ export default async function HomePage({ searchParams }: Props) {
     <div>
       <HeroCarousel images={heroImages} />
 
-      {/* Trust bar */}
-      <section className="border-b bg-background">
-        <div className="container mx-auto px-4 py-3">
-          <div className="flex flex-wrap justify-center gap-4 md:gap-10 text-xs text-muted-foreground">
-            <span>✓ Free delivery over CA$75</span>
-            <span>✓ 30-day returns</span>
-            <span>✓ Secure checkout</span>
-            <span>✓ Canada-based support</span>
-          </div>
-        </div>
-      </section>
+      <TrustBar />
 
       {/* Products */}
       <section id="products" className="container mx-auto px-4 py-10">

@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
@@ -12,11 +12,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
+import { useLocale } from '@/store/locale'
 
 type MenuState = 'closed' | 'main' | 'shop'
 
 function AuthButton() {
   const { data: session } = useSession()
+  const { t } = useLocale()
   if (!session) return null
   return (
     <DropdownMenu>
@@ -37,13 +39,13 @@ function AuthButton() {
           <p className="text-xs text-muted-foreground truncate">{session.user?.email}</p>
         </div>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild><Link href="/orders">My Orders</Link></DropdownMenuItem>
+        <DropdownMenuItem asChild><Link href="/orders">{t('myOrders')}</Link></DropdownMenuItem>
         {session.user?.role === 'ADMIN' && (
-          <DropdownMenuItem asChild><Link href="/admin">Admin Panel</Link></DropdownMenuItem>
+          <DropdownMenuItem asChild><Link href="/admin">{t('admin')}</Link></DropdownMenuItem>
         )}
         <DropdownMenuSeparator />
         <DropdownMenuItem className="text-destructive cursor-pointer" onClick={() => signOut({ callbackUrl: '/' })}>
-          Sign out
+          {t('signOut')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -66,24 +68,25 @@ function MainMenu({ onShop, onClose, session, onSignOut }: {
   session: ReturnType<typeof useSession>['data']
   onSignOut: () => void
 }) {
+  const { t } = useLocale()
   const row = 'font-heading uppercase tracking-widest text-2xl md:text-3xl py-5 border-b border-border/30 flex items-center justify-between w-full text-left hover:text-muted-foreground transition-colors'
   return (
     <div className="px-6 pt-8 pb-10">
       <nav className="space-y-0">
         <button onClick={onShop} className={row}>
-          <span>Shop</span>
+          <span>{t('shop')}</span>
           <ChevronRight className="h-5 w-5" />
         </button>
-        <Link href="/lookbook" onClick={onClose} className={`${row} block`}>Lookbook</Link>
-        {session && <Link href="/orders" onClick={onClose} className={`${row} block`}>My Orders</Link>}
-        <Link href="/contact" onClick={onClose} className={`${row} block`}>Contact</Link>
-        <Link href="/faq" onClick={onClose} className={`${row} block`}>FAQ</Link>
+        <Link href="/lookbook" onClick={onClose} className={`${row} block`}>{t('lookbook')}</Link>
+        {session && <Link href="/orders" onClick={onClose} className={`${row} block`}>{t('myOrders')}</Link>}
+        <Link href="/contact" onClick={onClose} className={`${row} block`}>{t('contact')}</Link>
+        <Link href="/faq" onClick={onClose} className={`${row} block`}>{t('faq')}</Link>
         {session?.user?.role === 'ADMIN' && (
-          <Link href="/admin" onClick={onClose} className={`${row} block`}>Admin</Link>
+          <Link href="/admin" onClick={onClose} className={`${row} block`}>{t('admin')}</Link>
         )}
-        {!session && <Link href="/login" onClick={onClose} className={`${row} block`}>Sign in</Link>}
+        {!session && <Link href="/login" onClick={onClose} className={`${row} block`}>{t('signIn')}</Link>}
         {session && (
-          <button onClick={onSignOut} className={`${row} text-muted-foreground text-xl`}>Sign out</button>
+          <button onClick={onSignOut} className={`${row} text-muted-foreground text-xl`}>{t('signOut')}</button>
         )}
       </nav>
     </div>
@@ -95,6 +98,7 @@ function ShopMenu({ categories, onBack, onClose }: {
   onBack: () => void
   onClose: () => void
 }) {
+  const { t } = useLocale()
   const row = 'font-heading uppercase tracking-widest text-2xl md:text-3xl py-5 border-b border-border/30 block w-full text-left hover:text-muted-foreground transition-colors'
   return (
     <div className="px-6 pt-8 pb-10">
@@ -103,10 +107,10 @@ function ShopMenu({ categories, onBack, onClose }: {
         className="flex items-center gap-2 text-xs font-heading uppercase tracking-widest text-muted-foreground mb-8 hover:text-foreground transition-colors"
       >
         <ArrowLeft className="h-4 w-4" />
-        Shop
+        {t('shop')}
       </button>
       <nav className="space-y-0">
-        <Link href="/" onClick={onClose} className={row}>All</Link>
+        <Link href="/" onClick={onClose} className={row}>{t('all')}</Link>
         {categories.length === 0 && (
           <p className="text-muted-foreground text-sm py-4">Loading...</p>
         )}
@@ -130,6 +134,7 @@ export function Navbar() {
   const [categories, setCategories] = useState<string[]>([])
   const [searchOpen, setSearchOpen] = useState(false)
   const { data: session } = useSession()
+  const { t } = useLocale()
 
   useEffect(() => {
     if (menuState === 'shop' && categories.length === 0) {
@@ -162,8 +167,8 @@ export function Navbar() {
           )}
         </div>
 
-        <Link href="/" onClick={closeMenu} className="font-heading uppercase tracking-widest text-sm whitespace-nowrap">
-          My Store
+        <Link href="/" onClick={closeMenu} className="font-heading uppercase tracking-widest text-sm whitespace-nowrap logo-pearl">
+          16K
         </Link>
 
         <div className="flex-1 flex items-center justify-end gap-3">
@@ -201,7 +206,7 @@ export function Navbar() {
           <input
             autoFocus
             className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
-            placeholder="Search products..."
+            placeholder={t('searchPlaceholder')}
             onKeyDown={e => {
               if (e.key === 'Enter') {
                 const q = (e.target as HTMLInputElement).value.trim()
@@ -216,4 +221,3 @@ export function Navbar() {
     </>
   )
 }
-
